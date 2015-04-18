@@ -1,23 +1,23 @@
 
-""" 
+"""
 Set up the plot figures, axes, and items to be done for each frame.
 
 This module is imported by the plotting routines and then the
 function setplot is called to set the plot parameters.
-    
-""" 
+
+"""
 
 
 #--------------------------
 def setplot(plotdata):
 #--------------------------
-    
-    """ 
+
+    """
     Specify what is to be plotted at each frame.
     Input:  plotdata, an instance of clawpack.visclaw.data.ClawPlotData.
     Output: a modified version of plotdata.
-    
-    """ 
+
+    """
 
 
     from clawpack.visclaw import colormaps, geoplot
@@ -33,7 +33,7 @@ def setplot(plotdata):
         from clawpack.visclaw import gaugetools
         gaugetools.plot_gauge_locations(current_data.plotdata, \
              gaugenos='all', format_string='ko', add_labels=False)
-    
+
     def fixup(current_data):
         import pylab
         addgauges(current_data)
@@ -86,7 +86,7 @@ def setplot(plotdata):
     plotitem.contour_levels = linspace(-2000,0,5)
     plotitem.amr_contour_colors = ['y']  # color on each level
     plotitem.kwargs = {'linestyles':'solid','linewidths':2}
-    plotitem.amr_contour_show = [1,0,0]  
+    plotitem.amr_contour_show = [1,0,0]
     plotitem.celledges_show = 0
     plotitem.patchedges_show = 0
 
@@ -133,7 +133,7 @@ def setplot(plotdata):
     plotitem.contour_levels = linspace(-2000,0,5)
     plotitem.amr_contour_colors = ['y']  # color on each level
     plotitem.kwargs = {'linestyles':'solid','linewidths':2}
-    plotitem.amr_contour_show = [1,0,0]  
+    plotitem.amr_contour_show = [1,0,0]
     plotitem.celledges_show = 0
     plotitem.patchedges_show = 0
 
@@ -180,7 +180,7 @@ def setplot(plotdata):
     plotitem.contour_levels = linspace(-2000,0,5)
     plotitem.amr_contour_colors = ['y']  # color on each level
     plotitem.kwargs = {'linestyles':'solid','linewidths':2}
-    plotitem.amr_contour_show = [1,0,0]  
+    plotitem.amr_contour_show = [1,0,0]
     plotitem.celledges_show = 0
     plotitem.patchedges_show = 0
 
@@ -228,8 +228,45 @@ def setplot(plotdata):
     plotitem.contour_levels = linspace(0,8,9)
     plotitem.amr_contour_colors = ['y']  # color on each level
     plotitem.kwargs = {'linestyles':'solid','linewidths':2}
-    plotitem.amr_contour_show = [0,0,0,0,0,1]  
+    plotitem.amr_contour_show = [0,0,0,0,0,1]
     plotitem.celledges_show = 0
+    plotitem.patchedges_show = 0
+
+
+    #-------------------------------------------------------------------
+    # Figure for KML files
+    #--------------------------------------------------------------------
+    plotfigure = plotdata.new_plotfigure(name='kml_figure',figno=4)
+    plotfigure.show = True   # Don't show this file in the html version
+    plotfigure.use_for_kml = True
+    plotfigure.kml_dpi = 200
+    plotfigure.kml_xlimits = [132.0, 210.0]
+    plotfigure.kml_ylimits = [9.0, 53.0]
+    plotfigure.kml_starttime = [2011,3,11,5,46,0]  # [Y,M,D,H,M,S] (UTC)
+    plotfigure.kml_tz_offset = -9     # offset to UTC
+    plotfigure.kml_tile_images = True
+    plotfigure.kml_url = 'http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/tohoku'
+
+    def kml_colorbar():
+        kml_cmin = -0.2
+        kml_cmax = 0.2
+        geoplot.kml_build_colorbar(geoplot.googleearth_darkblue,
+                                   kml_cmin,kml_cmax)
+
+    plotfigure.kml_colorbar = kml_colorbar
+
+    # Set up for axes in this figure:
+    plotaxes = plotfigure.new_plotaxes('kml')
+    plotaxes.scaled = True
+
+    # Water
+    plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
+    plotitem.plot_var = geoplot.surface_or_depth
+    # plotitem.pcolor_cmap = geoplot.googleearth_transparent
+    plotitem.pcolor_cmap = geoplot.googleearth_darkblue
+    plotitem.pcolor_cmin = -0.2
+    plotitem.pcolor_cmax = 0.2
+    plotitem.amr_celledges_show = [0,0,0]
     plotitem.patchedges_show = 0
 
 
@@ -261,7 +298,7 @@ def setplot(plotdata):
         eta = q[:,3]
         topo = eta - h
         return topo
-        
+
     plotitem.plot_var = gaugetopo
     plotitem.plotstyle = 'g-'
 
@@ -336,15 +373,15 @@ def setplot(plotdata):
 
 
     #-----------------------------------------
-    
+
     # Parameters used only when creating html and/or latex hardcopy
     # e.g., via clawpack.visclaw.frametools.printframes:
 
     plotdata.printfigs = True                # print figures
     plotdata.print_format = 'png'            # file format
-    plotdata.print_framenos = 'all'          # list of frames to print
+    plotdata.print_framenos = 'all'         # list of frames to print
     plotdata.print_gaugenos = 'all'          # list of gauges to print
-    plotdata.print_fignos = 'all'            # list of figures to print
+    plotdata.print_fignos = [4]           # list of figures to print
     plotdata.html = True                     # create html files of plots?
     plotdata.html_homelink = '../README.html'   # pointer for top of index
     plotdata.latex = True                    # create latex file of plots?
@@ -352,5 +389,6 @@ def setplot(plotdata):
     plotdata.latex_framesperline = 1         # layout of plots
     plotdata.latex_makepdf = False           # also run pdflatex?
 
-    return plotdata
+    plotdata.kml = True
 
+    return plotdata
