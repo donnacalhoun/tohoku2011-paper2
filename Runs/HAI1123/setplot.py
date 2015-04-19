@@ -244,13 +244,14 @@ def setplot(plotdata):
     plotfigure.kml_ylimits = [9.0, 53.0]
     plotfigure.kml_starttime = [2011,3,11,5,46,0]  # [Y,M,D,H,M,S] (UTC)
     plotfigure.kml_tz_offset = -9     # offset to UTC
-    plotfigure.kml_tile_images = True
-    plotfigure.kml_url = 'http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/tohoku'
+    plotfigure.kml_tile_images = False
+    #plotfigure.kml_url = 'http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/tohoku'
 
-    def kml_colorbar():
+    def kml_colorbar(filename):
         kml_cmin = -0.2
         kml_cmax = 0.2
-        geoplot.kml_build_colorbar(geoplot.googleearth_darkblue,
+        geoplot.kml_build_colorbar(filename,
+                                   geoplot.googleearth_darkblue,
                                    kml_cmin,kml_cmax)
 
     plotfigure.kml_colorbar = kml_colorbar
@@ -381,7 +382,7 @@ def setplot(plotdata):
     plotdata.print_format = 'png'            # file format
     plotdata.print_framenos = 'all'         # list of frames to print
     plotdata.print_gaugenos = 'all'          # list of gauges to print
-    plotdata.print_fignos = [4]           # list of figures to print
+    plotdata.print_fignos = [4,300]           # list of figures to print
     plotdata.html = True                     # create html files of plots?
     plotdata.html_homelink = '../README.html'   # pointer for top of index
     plotdata.latex = True                    # create latex file of plots?
