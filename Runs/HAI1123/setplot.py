@@ -44,10 +44,21 @@ def setplot(plotdata):
         #pylab.yticks(fontsize=15)
 
     #-----------------------------------------
+    # Some global kml flags
+    #-----------------------------------------
+    plotdata.kml_index_fname = "Tohoku_2011"     # Name for .kmz and .kml files.
+    plotdata.kml_name = "Tohoku 2011"
+
+    plotdata.kml_starttime = [2011,3,11,5,46,0]  # [Y,M,D,H,M,S] (UTC)
+    plotdata.kml_tz_offset = -9     # offset to UTC
+
+    plotdata.kml_publish = "http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/kmz"
+
+    #-----------------------------------------
     # Figure for pcolor plot
     #-----------------------------------------
-    plotfigure = plotdata.new_plotfigure(name='pcolor', figno=0)
-    plotfigure.show = False
+    plotfigure = plotdata.new_plotfigure(name='Bathymetry', figno=0)
+    plotfigure.show = False   # Don't show this file in the html version
 
     # Set up for axes in this figure:
     plotaxes = plotfigure.new_plotaxes('pcolor')
@@ -55,10 +66,13 @@ def setplot(plotdata):
     plotaxes.scaled = True
 
     plotaxes.afteraxes = fixup
+    plotaxes.xlimits = [132.0, 210.0]
+    plotaxes.ylimits = [9.0, 53.0]
 
     # Water
     plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
     #plotitem.plot_var = geoplot.surface
+    plotitem.show = False
     plotitem.plot_var = geoplot.surface_or_depth
     plotitem.pcolor_cmap = geoplot.tsunami_colormap
     plotitem.pcolor_cmin = -0.2
@@ -69,6 +83,7 @@ def setplot(plotdata):
 
     # Land
     plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
+    plotitem.show = False
     plotitem.plot_var = geoplot.land
     plotitem.pcolor_cmap = geoplot.land_colors
     plotitem.pcolor_cmin = 0.0
@@ -81,11 +96,11 @@ def setplot(plotdata):
 
     # add contour lines of bathy if desired:
     plotitem = plotaxes.new_plotitem(plot_type='2d_contour')
-    plotitem.show = False
+    plotitem.show = True
     plotitem.plot_var = geoplot.topo
     plotitem.contour_levels = linspace(-2000,0,5)
-    plotitem.amr_contour_colors = ['y']  # color on each level
-    plotitem.kwargs = {'linestyles':'solid','linewidths':2}
+    plotitem.amr_contour_colors = ['w']  # color on each level
+    plotitem.kwargs = {'linestyles':'solid','linewidths':1}
     plotitem.amr_contour_show = [1,0,0]
     plotitem.celledges_show = 0
     plotitem.patchedges_show = 0
@@ -236,16 +251,18 @@ def setplot(plotdata):
     #-------------------------------------------------------------------
     # Figure for KML files
     #--------------------------------------------------------------------
-    plotfigure = plotdata.new_plotfigure(name='kml_figure',figno=4)
+    plotfigure = plotdata.new_plotfigure(name='Sea Surface',figno=4)
     plotfigure.show = True   # Don't show this file in the html version
+
+    plotfigure.kml_use_for_initial_view= True
     plotfigure.use_for_kml = True
-    plotfigure.kml_dpi = 200
+
+    # Resolution
+    plotfigure.kml_dpi = 400
+    plotfigure.kml_tile_images = True
+
     plotfigure.kml_xlimits = [132.0, 210.0]
     plotfigure.kml_ylimits = [9.0, 53.0]
-    plotfigure.kml_starttime = [2011,3,11,5,46,0]  # [Y,M,D,H,M,S] (UTC)
-    plotfigure.kml_tz_offset = -9     # offset to UTC
-    plotfigure.kml_tile_images = False
-    #plotfigure.kml_url = 'http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/tohoku'
 
     def kml_colorbar(filename):
         kml_cmin = -0.2
@@ -257,7 +274,10 @@ def setplot(plotdata):
     plotfigure.kml_colorbar = kml_colorbar
 
     # Set up for axes in this figure:
-    plotaxes = plotfigure.new_plotaxes('kml')
+    plotaxes = plotfigure.new_plotaxes('pcolor')
+    plotaxes.xlimits = [132.0, 210.0]
+    plotaxes.ylimits = [9.0, 53.0]
+
     plotaxes.scaled = True
 
     # Water
@@ -382,7 +402,7 @@ def setplot(plotdata):
     plotdata.print_format = 'png'            # file format
     plotdata.print_framenos = 'all'         # list of frames to print
     plotdata.print_gaugenos = 'all'          # list of gauges to print
-    plotdata.print_fignos = [4,300]           # list of figures to print
+    plotdata.print_fignos = [0,4,300]           # list of figures to print
     plotdata.html = True                     # create html files of plots?
     plotdata.html_homelink = '../README.html'   # pointer for top of index
     plotdata.latex = True                    # create latex file of plots?
@@ -391,5 +411,6 @@ def setplot(plotdata):
     plotdata.latex_makepdf = False           # also run pdflatex?
 
     plotdata.kml = True
+    #plotfigure.kml_url = 'http://math.boisestate.edu/~calhoun/visclaw/GoogleEarth/tohoku'
 
     return plotdata
