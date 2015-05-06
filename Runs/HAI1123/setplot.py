@@ -58,7 +58,7 @@ def setplot(plotdata):
     # Figure for pcolor plot
     #-----------------------------------------
     plotfigure = plotdata.new_plotfigure(name='Bathymetry', figno=0)
-    plotfigure.show = False   # Don't show this file in the html version
+    plotfigure.show = True   # Don't show this file in the html version
 
     # Set up for axes in this figure:
     plotaxes = plotfigure.new_plotaxes('pcolor')
@@ -72,7 +72,7 @@ def setplot(plotdata):
     # Water
     plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
     #plotitem.plot_var = geoplot.surface
-    plotitem.show = False
+    plotitem.show = True
     plotitem.plot_var = geoplot.surface_or_depth
     plotitem.pcolor_cmap = geoplot.tsunami_colormap
     plotitem.pcolor_cmin = -0.2
@@ -83,7 +83,7 @@ def setplot(plotdata):
 
     # Land
     plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
-    plotitem.show = False
+    plotitem.show = True
     plotitem.plot_var = geoplot.land
     plotitem.pcolor_cmap = geoplot.land_colors
     plotitem.pcolor_cmin = 0.0
@@ -143,7 +143,7 @@ def setplot(plotdata):
 
     # add contour lines of bathy if desired:
     plotitem = plotaxes.new_plotitem(plot_type='2d_contour')
-    plotitem.show = False
+    plotitem.show = True
     plotitem.plot_var = geoplot.topo
     plotitem.contour_levels = linspace(-2000,0,5)
     plotitem.amr_contour_colors = ['y']  # color on each level
@@ -257,38 +257,36 @@ def setplot(plotdata):
     plotfigure.kml_use_for_initial_view= True
     plotfigure.use_for_kml = True
 
-    # Resolution
-    plotfigure.kml_dpi = 400
+    # Resolution : numcells = [39, 22]; maxlevel = 4
+    # Refinement in setrun.py : [5, 6, 4]
+    rcl = 2    # rcl*figsize = numcells
+    plotfigure.kml_dpi = rcl*5*6*4
+    plotfigure.kml_figsize = [19.5,11]
+
     plotfigure.kml_tile_images = True
 
+    # LatLong box used for plotting
     plotfigure.kml_xlimits = [132.0, 210.0]
     plotfigure.kml_ylimits = [9.0, 53.0]
 
-    def kml_colorbar(filename):
-        kml_cmin = -0.2
-        kml_cmax = 0.2
-        geoplot.kml_build_colorbar(filename,
-                                   geoplot.googleearth_transparent,
-                                   kml_cmin,kml_cmax)
-
-    plotfigure.kml_colorbar = kml_colorbar
+    cmin = -0.2
+    cmax = 0.2
+    cmap = geoplot.googleearth_transparent
 
     # Set up for axes in this figure:
     plotaxes = plotfigure.new_plotaxes('pcolor')
-    plotaxes.xlimits = [132.0, 210.0]
-    plotaxes.ylimits = [9.0, 53.0]
-
-    plotaxes.scaled = True
-
-    # Water
     plotitem = plotaxes.new_plotitem(plot_type='2d_pcolor')
     plotitem.plot_var = geoplot.surface_or_depth
-    plotitem.pcolor_cmap = geoplot.googleearth_transparent
-    #plotitem.pcolor_cmap = geoplot.googleearth_darkblue
-    plotitem.pcolor_cmin = -0.2
-    plotitem.pcolor_cmax = 0.2
-    plotitem.amr_celledges_show = [0,0,0]
-    plotitem.patchedges_show = 0
+    plotitem.pcolor_cmap = cmap
+    plotitem.pcolor_cmin = cmin
+    plotitem.pcolor_cmax = cmax
+
+    def kml_colorbar(filename):
+        geoplot.kml_build_colorbar(filename,
+                                   cmap,
+                                   cmin,cmax)
+
+    plotfigure.kml_colorbar = kml_colorbar
 
 
     #-----------------------------------------
@@ -402,7 +400,7 @@ def setplot(plotdata):
     plotdata.print_format = 'png'            # file format
     plotdata.print_framenos = 'all'         # list of frames to print
     plotdata.print_gaugenos = 'all'          # list of gauges to print
-    plotdata.print_fignos = [0,4,300]           # list of figures to print
+    plotdata.print_fignos = [4]           # list of figures to print
     plotdata.html = True                     # create html files of plots?
     plotdata.html_homelink = '../README.html'   # pointer for top of index
     plotdata.latex = True                    # create latex file of plots?
